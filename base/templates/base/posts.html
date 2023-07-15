@@ -1,0 +1,15 @@
+{% for post in posts %}
+<a href="{% url 'view_post' post.id %}"
+    class="list-group-item list-group-item-action flex-column align-items-start bg-dark text-white">
+    <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">{{ post.title }}</h5>
+        <small></small>
+    </div>
+    <p class="mb-1">{{post.content | truncatechars:100}}</p>
+    <small>{{post.creator}}</small>
+</a>
+<hr>
+{% empty %}
+<h3>No posts here</h3>
+
+{% endfor %}

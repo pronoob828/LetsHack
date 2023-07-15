@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="text-center">
+        <h3>Update Post</h3>
+    </div>
+    <div class="m-5 p-1 ">
+
+        <form action="{% url 'update_post' post.id %}" method="post" >
+            {% csrf_token %}
+            {{ post_form.as_p}}
+            <input type="submit" class="btn btn-success" value="Update Post">
+        </form>
+
+    </div>
+{% endblock %}

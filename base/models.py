@@ -29,15 +29,23 @@ class Room(models.Model):
         return self.name 
     
 
-""" class Post(models.Model):
+class Post(models.Model):
     title = models.CharField(max_length=120)
     content = models.TextField()
+    creator = models.ForeignKey(Account,on_delete=models.CASCADE,related_name="user_posts")
+    room = models.ForeignKey(Room,on_delete=models.CASCADE,related_name='room_posts')
     likes = models.ManyToManyField(Account,related_name='liked_posts')
     dislikes = models.ManyToManyField(Account,related_name='disliked_posts')
     bookmarks = models.ManyToManyField(Account,related_name='bookmarked_posts')
+    pinned = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['pinned','-created_at']
 
     def __str__(self):
-        return self.title """
+        return self.title
 
 
 

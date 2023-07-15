@@ -9,26 +9,27 @@
         </div>
         <div class="border-bottom border-info">
             <div class="text-center">
-                <h2>{{room.name}}</h2>
-                <small>{{room.creator}}</small>
-                {% if request.user == room.creator %}
+                <h2>{{post.title}}</h2>
+                <small>{{post.creator}}</small>
+                {% if request.user == post.creator %}
                 <div>
-                    <a href="{% url 'update_room' room.id %}" class="btn btn-info btn-sm">Update</a>
-                    <a href="{% url 'delete_room' room.id %}" class="btn btn-danger btn-sm">Delete</a>
+                    <a href="{% url 'update_post' post.id%}" class="btn btn-info btn-sm">Update</a>
+                    <a href="{% url 'delete_post' post.id%}" class="btn btn-danger btn-sm">Delete</a>
                 </div>
                 {% endif %}
             </div>
-            <p class="text-center">{{room.description}}</p>
+            <p class="text-center">{{post.content}}</p>
         </div>
         <div class="text-white container">
-            <h3 class="text-left m-3">Posts</h3>
+            <h3 class="text-left m-3">Comments</h3>
             <hr class="text-info">
-            {% include "base/create_post.html" %}
             <hr class="text-info">
         </div>
         <div class="container">
             <div class="border rounded border-success list-group p-3 m-1">
-                {% include "base/posts.html" %}
+                {% comment %}
+                  comments go here
+                {% endcomment %}
             </div>
         </div>
 
@@ -36,7 +37,7 @@
     <div class="border rounded border-success m-2">
         <h2 class="text-center">Participants</h2>
         <ul class="list-group">
-            {% for participant in room.participants.all %}
+            {% for participant in post.participants.all %}
             <li class="list-group-item bg-dark m-1 text-white">{{participant}}</li>
             {% endfor %}
         </ul>
