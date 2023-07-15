@@ -2,6 +2,10 @@
 <div class="list-group-item list-group-item-action flex-column align-items-start bg-dark text-white">
     <small>{{comment.creator}}</small>
     <p class="mb-1">{{comment.content | truncatechars:100}}</p>
+    {% if request.user == comment.creator or request.user.is_superuser%}
+        <small><small><a href="{% url 'delete_comment' comment.id %}" 
+            class="link-opacity-50 link-underline-dark text-white"> Delete</a></small></small>
+    {% endif %}
 </div>
 <hr>
 {% empty %}

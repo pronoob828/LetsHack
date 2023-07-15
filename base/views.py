@@ -3,6 +3,7 @@ from django.urls import reverse
 from .models import Room
 from accounts.models import Account
 from .forms import *
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def index(request):
@@ -28,6 +29,7 @@ def view_room(request, roomid):
     
     return render(request,"base/view_room.html",context)
 
+@login_required
 def create_room(request):
     if request.method == 'POST':
         form = RoomCreationForm(request.POST)
@@ -44,6 +46,7 @@ def create_room(request):
         form = RoomCreationForm()
         return render(request, 'base/create_room.html', {'form': form})
     
+@login_required
 def update_room(request,roomid):
     room = get_object_or_404(Room, pk=roomid)
     if request.method == 'POST':
@@ -57,6 +60,7 @@ def update_room(request,roomid):
         form = RoomCreationForm()
         return render(request, 'base/update_room.html', {'form': form,'room': room})
     
+@login_required
 def delete_room(request,roomid):
 
     room = Room.objects.get(id=roomid)
@@ -69,17 +73,20 @@ def delete_room(request,roomid):
     else:
         return render(request, 'base/delete_room.html', {'room': room})
 
+@login_required
 def join_room(request,roomid):
     room = get_object_or_404(Room, pk=roomid)
     room.participants.add(request.user)
     return HttpResponseRedirect(reverse('view_room', args=(roomid,)))
 
+@login_required
 def leave_room(request,roomid):
     room = get_object_or_404(Room, pk=roomid)
     room.participants.remove(request.user)
     return HttpResponseRedirect(reverse('view_room', args=(roomid,)))
 
 #POSTS
+@login_required
 def create_post(request,roomid):
     room = Room.objects.get(id=roomid)
     if request.method == 'POST':
@@ -102,6 +109,7 @@ def view_post(request,postid):
     comment_form = CommentCreationForm()
     return render(request, 'base/view_post.html', {'post': post , 'comments': comments,'comment_form': comment_form})
 
+@login_required
 def delete_post(request,postid):
     post = Post.objects.get(id=postid)
     if request.method == 'POST':
@@ -113,6 +121,7 @@ def delete_post(request,postid):
     else:
         return render(request, 'base/delete_post.html', {'post': post})
 
+@login_required
 def update_post(request,postid):
     post = get_object_or_404(Post, pk=postid)
     if request.method == 'POST':
@@ -129,6 +138,7 @@ def update_post(request,postid):
 
 
 #COMMENTS
+@login_required
 def create_comment(request,postid):
     post = get_object_or_404(Post, pk=postid)
     if request.method == 'POST':
@@ -145,6 +155,7 @@ def create_comment(request,postid):
         form = CommentCreationForm()
         return render(request, 'base/view_post.html', {'comment_form': form,'post':post,'comment':comment})
     
+@login_required
 def delete_comment(request,commentid):
     comment = get_object_or_404(Comment, pk=commentid)
     if request.method == 'POST':
