@@ -8,6 +8,12 @@
             <div class="text-center">
                 <h2>{{room.name}}</h2>
                 <small>{{room.creator}}</small>
+                {% if request.user == room.creator %}
+                <div>
+                    <a href="{% url 'update_room' room.id %}" class="btn btn-info btn-sm">Update</a>
+                    <a href="{% url 'delete_room' room.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+                {% endif %}
             </div>
             <p class="text-center">{{room.description}}</p>
         </div>

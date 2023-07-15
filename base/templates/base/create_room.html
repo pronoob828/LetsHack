@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="text-center">
+        <h3>Create Room</h3>
+        <small>You can add participants by sharing your room link</small>
+    </div>
+    <div class="m-5 border border-success rounded p-5">
+
+        <form action="{% url 'create_room' %}" method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <input type="submit" class="btn btn-success">
+        </form>
+        
+    </div>
+{% endblock %}

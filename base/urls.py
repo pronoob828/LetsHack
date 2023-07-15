@@ -9,5 +9,9 @@ urlpatterns = [
     
     #Rooms
     path('room/<int:roomid>',view_room,name='view_room'),
+    path('room/<int:roomid>/delete',delete_room,name='delete_room'),
+    path('create_room',create_room,name='create_room'),
+    path('room/<int:roomid>/update',update_room,name='update_room'),
+
     
 ]

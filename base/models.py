@@ -26,7 +26,7 @@ class Room(models.Model):
 
 
     def __str__(self):
-        return self.name
+        return self.name 
     
 
 """ class Post(models.Model):
@@ -34,7 +34,10 @@ class Room(models.Model):
     content = models.TextField()
     likes = models.ManyToManyField(Account,related_name='liked_posts')
     dislikes = models.ManyToManyField(Account,related_name='disliked_posts')
-    bookmarks = models.ManyToManyField(Account,related_name='bookmarked_posts') """
+    bookmarks = models.ManyToManyField(Account,related_name='bookmarked_posts')
+
+    def __str__(self):
+        return self.title """
 
 
 
