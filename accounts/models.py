@@ -41,7 +41,7 @@ class Account(AbstractBaseUser,PermissionsMixin):
     ]
 
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
-    username = models.CharField(max_length=30, unique=False)
+    username = models.CharField(max_length=30, unique=True)
     gender = models.CharField(max_length=7,choices=Genders,default = "Male")
     phone_num = PhoneNumberField(blank=True)
     current_residence = CountryField(null =True , blank = True)

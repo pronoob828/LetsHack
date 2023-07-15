@@ -4,13 +4,31 @@ from .models import Room
 from accounts.models import Account
 from .forms import *
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 # Create your views here.
 
 def index(request):
     context = {}
-    rooms = Room.objects.all()
+    rooms = ''
+    if request.GET:
+        t = request.GET.get('t')
+        s = request.GET.get('s')
+        if t:
+            rooms = Room.objects.filter(Q(topic__name__icontains = t))
+        elif s:
+            if s.startswith('@'):
+                try:
+                    user = Account.objects.get(username = s[1:])
+                except:
+                    return HttpResponse("<h1>USER NOT FOUND</h1>",status = 404)
+                return HttpResponseRedirect(reverse('profile', args=(user.id,)))
+            else:
+                rooms = Room.objects.filter(Q(name__icontains = s))
+    else:
+        rooms = Room.objects.all()
     context['rooms'] = rooms
     context['creation_form'] = RoomCreationForm()
+    context['topics'] = Topic.objects.all()
     
     return render(request,"index.html",context)
 
@@ -36,9 +54,9 @@ def create_room(request):
         if form.is_valid():
             room = form.save(commit=False)
             room.creator = request.user
+            room.save()
             room.participants.add(request.user)
             room.admins.add(request.user)
-            room.save()
             return HttpResponseRedirect(reverse('view_room',args=(room.id,)))
         else:
             return render(request, 'base/create_room.html', {'form': form})
@@ -57,7 +75,7 @@ def update_room(request,roomid):
         else:
             return render(request, 'base/update_room.html', {'form': form,'room': room})
     else:
-        form = RoomCreationForm()
+        form = RoomCreationForm(instance=room)
         return render(request, 'base/update_room.html', {'form': form,'room': room})
     
 @login_required
@@ -132,7 +150,7 @@ def update_post(request,postid):
         else:
             return render(request, 'base/update_post.html', {'post_form': form,'post': post})
     else:
-        form = PostCreationForm()
+        form = PostCreationForm(instance=post)
         return render(request, 'base/update_post.html', {'post_form': form,'post': post})
     
 

@@ -1,6 +1,6 @@
 <div class="m-5 border border-success rounded p-5">
 
-    <form action="{% url 'create_room' %}" method="post">
+    <form action="{% url 'create_room' %}" class="form-control" method="post">
         {% csrf_token %}
         {{form.as_p}}
         <input type="submit" class="btn btn-success">

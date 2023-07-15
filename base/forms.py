@@ -1,14 +1,16 @@
 from django import forms
-from .models import Room,Post,Comment
+from .models import Room,Post,Comment,Topic
 
 class RoomCreationForm(forms.ModelForm):
+    
     class Meta:
         model = Room
-        fields = ('name','description','is_private')
+        fields = ('name','description','is_private','topic',)
         widgets = { 
-            'name': forms.TextInput(attrs={'class':'form-control bg-dark text-white'}),
-            'description': forms.Textarea(attrs={'class':'form-control bg-dark text-white'}),
+            'name': forms.TextInput(attrs={'class':'bg-dark text-white form-control'}),
+            'description': forms.Textarea(attrs={'class':'bg-dark text-white form-control'}),
             'is_private': forms.CheckboxInput(attrs={'class':'form-check',}),
+            'topic': forms.Select(attrs={'class':'form-control text-white bg-dark'}),
         }
 
 class PostCreationForm(forms.ModelForm):

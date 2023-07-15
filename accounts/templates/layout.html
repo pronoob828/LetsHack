@@ -41,8 +41,13 @@
                 <span class="text-white nav-item d-flex mx-3">
                     <ul class="text-white navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="text-white nav-item">
-                            <a class="text-white nav-link english" href="{% url 'index' %}">Home</a>
+                            <form class="form-inline" action="{% url 'index'%}" >
+                                <input name="s" class="form-control mr-sm-2" type="search" placeholder="Search Rooms" aria-label="Search">
+                              </form>
                         </li>         
+                        <li class="text-white nav-item">
+                            <a class="text-white nav-link english" href="{% url 'index' %}">Home</a>
+                        </li>
                     
                     {% if user.is_authenticated %}
                         {% if user.is_staff %}
