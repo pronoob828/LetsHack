@@ -1,0 +1,7 @@
+<div class="m-5 p-1 ">
+    <form action="{% url 'create_comment' post.id %}" method="post">
+        {% csrf_token %}
+        {{comment_form.as_p}}
+        <input type="submit" class="btn btn-success" value="Comment">
+    </form>
+</div>

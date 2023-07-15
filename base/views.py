@@ -24,6 +24,7 @@ def view_room(request, roomid):
     context['room'] = room
     context['post_form'] = PostCreationForm()
     context['posts'] = room.room_posts.all()
+    context['joined'] = (request.user in room.participants.all())
     
     return render(request,"base/view_room.html",context)
 
@@ -33,12 +34,14 @@ def create_room(request):
         if form.is_valid():
             room = form.save(commit=False)
             room.creator = request.user
+            room.participants.add(request.user)
+            room.admins.add(request.user)
             room.save()
             return HttpResponseRedirect(reverse('view_room',args=(room.id,)))
         else:
             return render(request, 'base/create_room.html', {'form': form})
     else:
-        form = RoomCreationForm(instance = form)
+        form = RoomCreationForm()
         return render(request, 'base/create_room.html', {'form': form})
     
 def update_room(request,roomid):
@@ -51,7 +54,7 @@ def update_room(request,roomid):
         else:
             return render(request, 'base/update_room.html', {'form': form,'room': room})
     else:
-        form = RoomCreationForm(instance=room)
+        form = RoomCreationForm()
         return render(request, 'base/update_room.html', {'form': form,'room': room})
     
 def delete_room(request,roomid):
@@ -66,6 +69,15 @@ def delete_room(request,roomid):
     else:
         return render(request, 'base/delete_room.html', {'room': room})
 
+def join_room(request,roomid):
+    room = get_object_or_404(Room, pk=roomid)
+    room.participants.add(request.user)
+    return HttpResponseRedirect(reverse('view_room', args=(roomid,)))
+
+def leave_room(request,roomid):
+    room = get_object_or_404(Room, pk=roomid)
+    room.participants.remove(request.user)
+    return HttpResponseRedirect(reverse('view_room', args=(roomid,)))
 
 #POSTS
 def create_post(request,roomid):
@@ -86,7 +98,9 @@ def create_post(request,roomid):
     
 def view_post(request,postid):
     post = get_object_or_404(Post, pk=postid)
-    return render(request, 'base/view_post.html', {'post': post})
+    comments = post.post_comments.all()
+    comment_form = CommentCreationForm()
+    return render(request, 'base/view_post.html', {'post': post , 'comments': comments,'comment_form': comment_form})
 
 def delete_post(request,postid):
     post = Post.objects.get(id=postid)
@@ -109,5 +123,36 @@ def update_post(request,postid):
         else:
             return render(request, 'base/update_post.html', {'post_form': form,'post': post})
     else:
-        form = PostCreationForm(instance=post)
+        form = PostCreationForm()
         return render(request, 'base/update_post.html', {'post_form': form,'post': post})
+    
+
+
+#COMMENTS
+def create_comment(request,postid):
+    post = get_object_or_404(Post, pk=postid)
+    if request.method == 'POST':
+        form = CommentCreationForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.creator = request.user
+            comment.post = post
+            comment.save()
+            return HttpResponseRedirect(reverse('view_post',args=(postid,)))
+        else:
+            return render(request, 'base/view_post.html', {'comment_form': form,'post':post,'comment':comment})
+    else:
+        form = CommentCreationForm()
+        return render(request, 'base/view_post.html', {'comment_form': form,'post':post,'comment':comment})
+    
+def delete_comment(request,commentid):
+    comment = get_object_or_404(Comment, pk=commentid)
+    if request.method == 'POST':
+        if comment.creator.id == request.user.id:
+            comment.delete()
+        else:
+            return HttpResponse("Action not allowed")
+        return HttpResponseRedirect(reverse('view_post',args=(comment.post.id,)))
+    else:
+        return render(request, 'base/delete_comment.html', {'comment': comment})
+

@@ -1,0 +1,10 @@
+{% for comment in comments %}
+<div class="list-group-item list-group-item-action flex-column align-items-start bg-dark text-white">
+    <small>{{comment.creator}}</small>
+    <p class="mb-1">{{comment.content | truncatechars:100}}</p>
+</div>
+<hr>
+{% empty %}
+<h4>No comments here</h4>
+
+{% endfor %}

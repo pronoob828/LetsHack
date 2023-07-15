@@ -1,5 +1,5 @@
 from django import forms
-from .models import Room,Post
+from .models import Room,Post,Comment
 
 class RoomCreationForm(forms.ModelForm):
     class Meta:
@@ -17,5 +17,13 @@ class PostCreationForm(forms.ModelForm):
         fields = ('title', 'content')
         widgets = {
             'title': forms.TextInput(attrs={'class':'form-control bg-dark text-white'}),
+            'content': forms.Textarea(attrs={'class':'form-control bg-dark text-white'}),
+        }
+
+class CommentCreationForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('content',)
+        widgets = {
             'content': forms.Textarea(attrs={'class':'form-control bg-dark text-white'}),
         }
