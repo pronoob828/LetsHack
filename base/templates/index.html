@@ -1,6 +1,15 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1>Hello</h1>
+
+<div style="display: grid; grid-template-columns: 1fr 3fr;">
+    <div class="border rounded border-success m-2 list-group">
+        <h4 class="text-center">Topics</h4>
+    </div>
+    <div class="border rounded border-success m-2 list-group">
+        <h4 class="text-center">Rooms</h4>
+        {% include "base/rooms.html" %}
+    </div>
+</div>
 
 {% endblock %}

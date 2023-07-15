@@ -14,7 +14,7 @@ class RegistrationForm(UserCreationForm):
     phone_num = PhoneNumberField()
     class Meta:
         model = Account
-        fields = ("email", "username", "password1", "password2", "last_name",
+        fields = ("email", "username", "password1", "password2",
                   "phone_num", "gender", "current_residence", "nationality")
         
         

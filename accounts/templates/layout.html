@@ -57,7 +57,7 @@
                                     <strong class="text-white px-2 bg-dark">{{user.username}}
                                         <i class="text-white fa-solid fa-user"></i></strong></span></a>
                             <ul class="text-white dropdown-menu dropdown-menu-end bg-dark" id="dropmenu" aria-labelledby="navbarDropdown">
-                                <li ><a class="text-white dropdown-item english" href="{% url 'login' %}">Profile</a>
+                                <li ><a class="text-white dropdown-item english" href="{% url 'profile' user.id %}">Profile</a>
                                 </li>
                                 <li>
                                     <hr>

@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="container" style="display: grid; grid-template-columns: 3fr 1fr;">
+    <div class="border rounded border-success m-2">
+        <div class="border-bottom border-info">
+            <div class="text-center">
+                <h2>{{room.name}}</h2>
+                <small>{{room.creator}}</small>
+            </div>
+            <p class="text-center">{{room.description}}</p>
+        </div>
+
+    </div>
+    <div class="border rounded border-success m-2">
+        <h2 class="text-center">Participants</h2>
+        <ul class="list-group">
+            {% for participant in room.participants.all %}
+            <li class="list-group-item bg-dark m-1 text-white">{{participant}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
+
+{% endblock %}

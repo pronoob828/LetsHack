@@ -42,7 +42,6 @@ class Account(AbstractBaseUser,PermissionsMixin):
 
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     username = models.CharField(max_length=30, unique=False)
-    last_name = models.CharField(max_length=25)
     gender = models.CharField(max_length=7,choices=Genders,default = "Male")
     phone_num = PhoneNumberField(blank=True)
     current_residence = CountryField(null =True , blank = True)
@@ -69,11 +68,11 @@ class Account(AbstractBaseUser,PermissionsMixin):
     objects = MyAccountManager()
     
     class Meta:
-        unique_together = ('username','last_name','email')
+        unique_together = ('username','email')
 
     def __str__(self):
-        return f"{self.username} {self.last_name} {self.email}"
+        return f"@{self.username}"
     
     def get_full_name(self):
-        full_name = "%s %s" % (self.username, self.last_name)
+        full_name = "%s" % (self.username,)
         return full_name.strip()
