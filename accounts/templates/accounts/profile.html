@@ -47,10 +47,12 @@ Profile : {{requested_user.username}}
 
 </div>
 
+
+{% if requested_user == request.user %}
 <hr class="text-info">
 
 <div class="container text-center">
-    <h4>User Posts</h4>
+    <h4>My rooms</h4>
     <div class="container border border-warning m-3 rounded p-3 text-center">
         {% for room in requested_user.created_rooms.all %}
         
@@ -65,6 +67,28 @@ Profile : {{requested_user.username}}
         
         {% empty %}
         <h3>No rooms</h3>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+<hr class="text-info">
+
+<div class="container text-center">
+    <h4>User Posts</h4>
+    <div class="container border border-warning m-3 rounded p-3 text-center">
+        {% for post in requested_user.user_posts.all %}
+        
+        <a href="{% url 'view_post' post.id %}" class="list-group-item list-group-item-action flex-column align-items-start bg-dark text-white border-dark">
+            <div class="d-flex w-100 ">
+                <h5 class="mb-1">{{ post.title }}</h5>
+                <small></small>
+            </div>
+            <p class="mb-1 text-left">{{post.content | truncatechars:100}}</p>
+        </a>
+        <hr class="text-info">
+        
+        {% empty %}
+        <h3>No posts</h3>
         {% endfor %}
     </div>
 </div>

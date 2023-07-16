@@ -11,7 +11,7 @@ And even then, some students get bored and some get left behind.
 
 *The solution*
 
-###Penpal
+### Penpal
 
 Rooms can be created for any topic, and posts can be created for its subtopics.
 

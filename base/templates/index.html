@@ -3,20 +3,21 @@
 {% block body %}
 
 <div style="display: grid; grid-template-columns: 1fr 4fr 1fr;">
-    <div class="border rounded border-info list-group p-3">
-        <h4 class="text-center">Topics</h4>
+    <div class="list-group p-3 border rounded border-info ">
+        <h4 class="text-center p-3 m-0 rounded text-black" style="background-color: aquamarine;">Topics</h4>
         {% for topic in topics %}
-        <a href="{% url 'index' %}?t={{topic.name}}" class="list-group-item list-group-item-action bg-dark text-white border-dark">
+        <a href="{% url 'index' %}?t={{topic.name}}"
+            class="list-group-item list-group-item-action bg-dark text-white border-dark">
             {{ topic.name }}
         </a>
         {% endfor %}
     </div>
     <div class="border rounded border-warning list-group p-3 m-1">
-        <h4 class="text-center">Rooms</h4>
+        <h4 class="text-center p-3 m-0 rounded text-black bg-warning">Rooms</h4>
         {% include "base/rooms.html" %}
     </div>
     <div class="container border rounded border-success p-3">
-        <h4 class="text-center">Create Room</h4>
+        <h4 class="text-center bg-success rounded p-3">Create Room</h4>
         <form action="{% url 'create_room' %}" method="post">
             {% csrf_token %}
             {{ creation_form.as_p }}
