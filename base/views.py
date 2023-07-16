@@ -81,7 +81,7 @@ def create_room(request):
     if request.method == 'POST':
         form = RoomCreationForm(request.POST)
         file_form = RoomFileForm(request.POST,request.FILES)
-        files = request.FILES.getlist('file')
+        files = request.POST.getlist('file')
         if form.is_valid() and file_form.is_valid():
             room = form.save(commit=False)
             room.creator = request.user
@@ -107,7 +107,7 @@ def update_room(request,roomid):
     if request.method == 'POST':
         form = RoomCreationForm(request.POST,instance = room)
         file_form = RoomFileForm(request.POST,request.FILES)
-        files = request.FILES.getlist('file')
+        files = request.POST.getlist('file')
         if form.is_valid() and file_form.is_valid():
             room = form.save(commit=False)
             room.creator = request.user
@@ -158,7 +158,7 @@ def create_post(request,roomid):
     if request.method == 'POST':
         form = PostCreationForm(request.POST)
         file_form = PostFileForm(request.POST,request.FILES)
-        files = request.FILES.getlist('file')
+        files = request.POST.getlist('file')
         if form.is_valid() and file_form.is_valid():
             post = form.save(commit=False)
             post.creator = request.user
