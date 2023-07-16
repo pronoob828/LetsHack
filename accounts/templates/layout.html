@@ -43,11 +43,14 @@
                     <ul class="text-white navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="text-white nav-item">
                             <form class="form-inline" action="{% url 'index'%}" >
-                                <input name="s" class="form-control mr-sm-2" type="search" placeholder="Search Rooms/users" aria-label="Search">
+                                <input name="s" class="form-control m-auto text-white bg-black border-info" type="search" placeholder="Search Rooms/users" aria-label="Search">
                               </form>
                         </li>         
                         <li class="text-white nav-item">
                             <a class="text-white nav-link english" href="{% url 'index' %}">Home</a>
+                        </li>
+                        <li class="text-white nav-item">
+                            <a class="text-white nav-link english" href="{% url 'about' %}">What is Penpals</a>
                         </li>
                     
                     {% if user.is_authenticated %}

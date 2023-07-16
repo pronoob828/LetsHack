@@ -3,6 +3,7 @@ from .views import *
 
 urlpatterns = [
     path('',index,name='index'),
+    path('about',about,name='about'),
 
     #profile
     path('accounts/<uuid:userid>',show_profile,name='profile'),

@@ -34,6 +34,9 @@ def index(request):
     
     return render(request,"index.html",context)
 
+def about(request):
+    return render(request,"about.html")
+
 def show_profile(request,userid):
     context = {}
     context['requested_user'] = Account.objects.get(id=userid)   
