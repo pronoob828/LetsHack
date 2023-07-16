@@ -1,5 +1,6 @@
 # Parul Let's Hack
 ## Welcome to *Penpals*: Your Online Learning Community
+### Installation guide at the bottom
 
 At Penpals, we believe that learning should be a collaborative and self-paced experience. We understand that every learner has unique needs and preferences, which is why we have created a platform that empowers individuals to create their own discussion rooms for learning skills. Whether you are a student, professional, or lifelong learner, Penpals provides you with a vibrant online community to connect, share knowledge, and grow together.
 
@@ -14,3 +15,12 @@ Whether you prefer self-paced learning or enjoy collaborating with others, Penpa
 Join Penpals today and embark on a journey of knowledge discovery and personal growth. Experience the power of collaborative learning in a self-paced environment. Connect with like-minded individuals, create meaningful discussions, and unlock your full learning potential. At Penpals, we are here to guide and inspire you every step of the way.
 
 Start exploring, learning, and connecting at Penpals – where skills are shared, conversations flourish, and lifelong learning thrives.
+
+## To run
+- clone the repo
+- create a virtual environment(optional)
+- run pip intall - r requirements.txt
+- run python manage.py makemigrations
+- run python manage.py migrate
+- run python manage.py runserver
+- A link should appear in the terminal
