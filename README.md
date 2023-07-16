@@ -3,10 +3,15 @@
 
 Penpals is website where you can learn and teach new skills,
 
-sometimes we have problems with either keeping up with class or feeling bored in class because we want more advanced topics
+Traditional Classrooms do not allow us to learn at our own pace
+
+And it's not the fault of the teachers, They have to walk with the whole class (sometimes crawl).
+
+And even then, some students get bored and some get left behind.
 
 *The solution*
-Penpal
+
+###Penpal
 
 Rooms can be created for any topic, and posts can be created for its subtopics.
 

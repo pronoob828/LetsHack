@@ -156,7 +156,7 @@ EMAIL_PAGE_DOMAIN = 'http://127.0.0.1:8000'
 #EMAIL_MULTI_USER = True  # optional (defaults to False)
 
 # For Django Email Backend
-if DEBUG:
+if not DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
