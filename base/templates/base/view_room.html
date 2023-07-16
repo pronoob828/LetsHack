@@ -12,19 +12,28 @@
                 <h2>{{room.name}}</h2>
                 <small>{{room.topic}}   -   {{room.creator}}</small>
                 <div>
-                {% if not joined %}
+                {% if not joined and not is_private%}
                     <a href="{% url 'join_room' room.id %}" class="btn btn-success btn-sm">Join Room</a>
                 {% endif %}
                 {% if request.user == room.creator %}
                     <a href="{% url 'update_room' room.id %}" class="btn btn-info btn-sm">Update</a>
                     <a href="{% url 'delete_room' room.id %}" class="btn btn-danger btn-sm">Delete</a>    
-                {% elif joined %}
+                {% elif joined and request.user != room.creator %}
                     <a href="{% url 'leave_room' room.id %}" class="btn btn-danger btn-sm">Leave Room</a>
                 {% endif %}
 
                 </div>
             </div>
-            <p class="text-center">{{room.description}}</p>
+            <div class="text-center">
+                {% for file in room.room_files.all %}
+                    <a href="{% url 'get_room_file' file %}">{{ file }}</a>
+                {% empty %}
+                <small>No files uploaded</small>
+                {% endfor %}
+            </div>
+            <div class="container-fluid">
+                <p class="text-center p-3">{{room.description_rendered | safe}}</p>
+            </div>
         </div>
         <div class="text-white container">
             <h3 class="text-left m-3">Posts</h3>

@@ -47,4 +47,26 @@ Profile : {{requested_user.username}}
 
 </div>
 
+<hr class="text-info">
+
+<div class="container text-center">
+    <h4>User Posts</h4>
+    <div class="container border border-warning m-3 rounded p-3 text-center">
+        {% for room in requested_user.created_rooms.all %}
+        
+        <a href="{% url 'view_room' room.id %}" class="list-group-item list-group-item-action flex-column align-items-start bg-dark text-white border-dark">
+            <div class="d-flex w-100 ">
+                <h5 class="mb-1">{{ room.name }}</h5>
+                <small></small>
+            </div>
+            <p class="mb-1 text-left">{{room.description | truncatechars:100}}</p>
+        </a>
+        <hr>
+        
+        {% empty %}
+        <h3>No rooms</h3>
+        {% endfor %}
+    </div>
+</div>
+
 {% endblock %}

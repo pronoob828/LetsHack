@@ -5,6 +5,7 @@ from accounts.models import Account
 from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.utils.encoding import smart_str
 # Create your views here.
 
 def index(request):
@@ -14,7 +15,7 @@ def index(request):
         t = request.GET.get('t')
         s = request.GET.get('s')
         if t:
-            rooms = Room.objects.filter(Q(topic__name__icontains = t))
+            rooms = Room.objects.filter(Q(topic__name__icontains = t)).exclude(is_private = True)
         elif s:
             if s.startswith('@'):
                 try:
@@ -25,9 +26,10 @@ def index(request):
             else:
                 rooms = Room.objects.filter(Q(name__icontains = s))
     else:
-        rooms = Room.objects.all()
+        rooms = Room.objects.all().exclude(is_private=True)
     context['rooms'] = rooms
     context['creation_form'] = RoomCreationForm()
+    context['file_form'] = RoomFileForm()
     context['topics'] = Topic.objects.all()
     
     return render(request,"index.html",context)
@@ -37,11 +39,32 @@ def show_profile(request,userid):
     context['requested_user'] = Account.objects.get(id=userid)   
     return render(request,"accounts/profile.html",context)
 
+def get_room_file(request,file_name):
+    response = HttpResponse(content_type = 'application/force-download') # mimetype is replaced by content_type for django 1.7
+    response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(file_name)
+    response['X-Sendfile'] = smart_str(reverse(get_room_file, args=(file_name,)))
+    # It's usually a good idea to set the 'Content-Length' header too.
+    # You can also set any other required headers: Cache-Control, etc.
+    return response
+    return
+
+def get_post_file(request,file_name):
+    response = HttpResponse(content_type = 'application/force-download') # mimetype is replaced by content_type for django 1.7
+    response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(file_name)
+    response['X-Sendfile'] = smart_str(reverse(get_post_file, args=(file_name,)))
+    # It's usually a good idea to set the 'Content-Length' header too.
+    # You can also set any other required headers: Cache-Control, etc.
+    return response
+    return
+
+#ROOMS
+
 def view_room(request, roomid):
     context = {}
     room = Room.objects.get(id=roomid)
     context['room'] = room
     context['post_form'] = PostCreationForm()
+    context['file_form'] = PostFileForm()
     context['posts'] = room.room_posts.all()
     context['joined'] = (request.user in room.participants.all())
     
@@ -51,32 +74,46 @@ def view_room(request, roomid):
 def create_room(request):
     if request.method == 'POST':
         form = RoomCreationForm(request.POST)
-        if form.is_valid():
+        file_form = RoomFileForm(request.POST,request.FILES)
+        files = request.FILES.getlist('file')
+        if form.is_valid() and file_form.is_valid():
             room = form.save(commit=False)
             room.creator = request.user
             room.save()
             room.participants.add(request.user)
             room.admins.add(request.user)
+            for f in files:
+                file_instance = RoomFile(file=f,room=room)
+                file_instance.save()
             return HttpResponseRedirect(reverse('view_room',args=(room.id,)))
         else:
-            return render(request, 'base/create_room.html', {'form': form})
+            return  render(request, 'base/create_room.html', {'form': form,'file_form':file_form,})
     else:
         form = RoomCreationForm()
-        return render(request, 'base/create_room.html', {'form': form})
+        file_form = RoomFileForm(request.POST,request.FILES)
+        return render(request, 'base/create_room.html', {'form': form,'file_form':file_form})
     
 @login_required
 def update_room(request,roomid):
     room = get_object_or_404(Room, pk=roomid)
     if request.method == 'POST':
-        form = RoomCreationForm(request.POST, instance=room)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('view_room',args=(roomid,)))
-        else:
-            return render(request, 'base/update_room.html', {'form': form,'room': room})
+        form = RoomCreationForm(request.POST,instance = room)
+        file_form = RoomFileForm(request.POST,request.FILES)
+        files = request.FILES.getlist('file')
+        if form.is_valid() and file_form.is_valid():
+            room = form.save(commit=False)
+            room.creator = request.user
+            room.save()
+            room.participants.add(request.user)
+            room.admins.add(request.user)
+            for f in files:
+                file_instance = RoomFile(file=f,room=room)
+                file_instance.save()
+            return HttpResponseRedirect(reverse('view_room',args=(room.id,)))
     else:
         form = RoomCreationForm(instance=room)
-        return render(request, 'base/update_room.html', {'form': form,'room': room})
+        file_form = RoomFileForm(request.POST,request.FILES)
+        return render(request, 'base/update_room.html', {'form': form,'file_form':file_form,'room': room})
     
 @login_required
 def delete_room(request,roomid):
@@ -100,31 +137,47 @@ def join_room(request,roomid):
 @login_required
 def leave_room(request,roomid):
     room = get_object_or_404(Room, pk=roomid)
+    if request.user == room.creator:
+        return HttpResponse("<h1>Creator cannot leave room</h1>")
     room.participants.remove(request.user)
     return HttpResponseRedirect(reverse('view_room', args=(roomid,)))
 
 #POSTS
 @login_required
 def create_post(request,roomid):
+    context = {}
     room = Room.objects.get(id=roomid)
     if request.method == 'POST':
         form = PostCreationForm(request.POST)
-        if form.is_valid():
+        file_form = PostFileForm(request.POST,request.FILES)
+        files = request.FILES.getlist('file')
+        if form.is_valid() and file_form.is_valid():
             post = form.save(commit=False)
             post.creator = request.user
             post.room = room
             post.save()
-            return HttpResponseRedirect(reverse('view_room',args=(roomid,)))
+            for f in files:
+                file_instance = PostFile(file=f,post=post)
+                file_instance.save()
+            return HttpResponseRedirect(reverse('view_post',args=(post.id,)))
         else:
-            return render(request, 'base/create_post.html', {'form': form,'room':room,'post':post})
+            return render(request, 'base/create_post.html', {'form': form,'file_form':file_form,'room':room,'post':post})
     else:
         form = PostCreationForm(instance = form)
-        return render(request, 'base/create_post.html', {'form': form,'room':room,'post':post})
+        file_form = PostFileForm(request.POST,request.FILES)
+        context['form'] = form
+        context['file_form'] = file_form
+        context['room'] = room
+        context['post'] = post
+        return render(request, 'base/create_post.html', context)
     
 def view_post(request,postid):
     post = get_object_or_404(Post, pk=postid)
     comments = post.post_comments.all()
     comment_form = CommentCreationForm()
+
+
+
     return render(request, 'base/view_post.html', {'post': post , 'comments': comments,'comment_form': comment_form})
 
 @login_required
@@ -144,14 +197,24 @@ def update_post(request,postid):
     post = get_object_or_404(Post, pk=postid)
     if request.method == 'POST':
         form = PostCreationForm(request.POST, instance=post)
-        if form.is_valid():
+        file_form = PostFileForm(request.POST,request.FILES)
+        files = request.FILES.getlist('file')
+        if form.is_valid() and file_form.is_valid():
             form.save()
+            for f in files:
+                file_instance = PostFile(file=f,post=post)
+                file_instance.save()
             return HttpResponseRedirect(reverse('view_room',args=(post.room.id,)))
         else:
             return render(request, 'base/update_post.html', {'post_form': form,'post': post})
     else:
+        context = {}
         form = PostCreationForm(instance=post)
-        return render(request, 'base/update_post.html', {'post_form': form,'post': post})
+        file_form = PostFileForm(request.POST,request.FILES)
+        context['post_form'] = form
+        context['file_form'] = file_form
+        context['post'] = post
+        return render(request, 'base/update_post.html', context)
     
 
 

@@ -14,12 +14,15 @@ urlpatterns = [
     path('room/<int:roomid>/delete',delete_room,name='delete_room'),
     path("room/<int:roomid>/join",join_room, name="join_room"),
     path("room/<int:roomid>/leave",leave_room,name="leave_room"),
+    #roomfile
+    path('media/room_files/<str:file_name>',get_room_file,name='get_room_file'),
 
     #Posts
     path('create_post/<int:roomid>',create_post,name='create_post'),
     path('post/<int:postid>',view_post,name='view_post'),
     path('post/<int:postid>/delete',delete_post,name='delete_post'),
     path('post/<int:postid>/update',update_post,name='update_post'),
+    path('media/post_files/<str:file_name>',get_post_file,name='get_post_file'),
 
     #Comments
     path('create_comment/<int:postid>',create_comment,name='create_comment'),

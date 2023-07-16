@@ -1,5 +1,10 @@
 from django.db import models
 from accounts.models import Account
+from django.db import models
+
+from markdownfield.models import MarkdownField, RenderedMarkdownField
+from markdownfield.validators import VALIDATOR_STANDARD
+
 
 # Create your models here.
 class Topic(models.Model):
@@ -10,7 +15,8 @@ class Topic(models.Model):
 
 class Room(models.Model):
     name = models.CharField(max_length=120)
-    description = models.TextField()
+    description = MarkdownField(rendered_field='description_rendered', validator=VALIDATOR_STANDARD)
+    description_rendered = RenderedMarkdownField()
     is_private = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -31,10 +37,21 @@ class Room(models.Model):
     def __str__(self):
         return self.name 
     
+class RoomFile(models.Model):
+    file = models.FileField(upload_to='./room_files/',null=True,blank=True,)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='room_files')
+    
+    class Meta:
+        unique_together = ('file', 'room')
+
+    def __str__(self): 
+        return self.file.name.partition('room_files/')[2]
 
 class Post(models.Model):
     title = models.CharField(max_length=120)
-    content = models.TextField()
+    content = MarkdownField(rendered_field='content_rendered', validator=VALIDATOR_STANDARD)
+    content_rendered = RenderedMarkdownField()
+
     creator = models.ForeignKey(Account,on_delete=models.CASCADE,related_name="user_posts")
     room = models.ForeignKey(Room,on_delete=models.CASCADE,related_name='room_posts')
     likes = models.ManyToManyField(Account,related_name='liked_posts')
@@ -49,6 +66,16 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+class PostFile(models.Model):
+    file = models.FileField(upload_to='./post_files/',null=True,blank=True,)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_files')
+
+    class Meta:
+        unique_together = ('file', 'post')  
+
+    def __str__(self):
+        return self.file.name.partition('post_files/')[2]
     
 
 class Comment(models.Model):

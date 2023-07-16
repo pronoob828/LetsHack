@@ -1,0 +1,18 @@
+{% load document %}
+{% if widget.is_initial %}
+    {{ widget.initial_text }}:<br>
+    {% if widget.value|length <= 25 %}
+        {% for f in widget.value %}
+            <a href="{{ f.url }}">{{ f.name|file_name }}</a><br>
+        {% endfor %}
+    {% else %}
+        {{ widget.value|length }} files<br>
+    {% endif %}
+    {% if not widget.required %}
+        <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}"
+           {% if widget.attrs.disabled %} disabled{% endif %}>
+        <label for="{{ widget.checkbox_id }}">{{ widget.clear_checkbox_label }}</label>
+    {% endif %}<br>
+    {{ widget.input_text }}:
+{% endif %}
+<input type="{{ widget.type }}" name="{{ widget.name }}" multiple{% include "django/forms/widgets/attrs.html" %}>

@@ -8,7 +8,8 @@
 
         <form action="{% url 'update_post' post.id %}" method="post" >
             {% csrf_token %}
-            {{ post_form.as_p}}
+            {{ post_form.as_p }}
+            {{file_form.as_p }}
             <input type="submit" class="btn btn-success" value="Update Post">
         </form>
 
