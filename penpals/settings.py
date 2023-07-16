@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-odvs33lo_f2&hzithnp#i%($@#=b2eo!*qh68*bq8mpkhapq=b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['http://127.0.0.1',]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -156,7 +156,7 @@ EMAIL_PAGE_DOMAIN = 'http://127.0.0.1:8000'
 #EMAIL_MULTI_USER = True  # optional (defaults to False)
 
 # For Django Email Backend
-if DEBUG:
+if not DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
