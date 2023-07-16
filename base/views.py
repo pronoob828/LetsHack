@@ -39,19 +39,23 @@ def show_profile(request,userid):
     context['requested_user'] = Account.objects.get(id=userid)   
     return render(request,"accounts/profile.html",context)
 
-def get_room_file(request,file_name):
+def get_room_file(request,fileid):
+    file = get_object_or_404(RoomFile,pk=fileid)
+    file_name = file.file.name
     response = HttpResponse(content_type = 'application/force-download') # mimetype is replaced by content_type for django 1.7
     response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(file_name)
-    response['X-Sendfile'] = smart_str(reverse(get_room_file, args=(file_name,)))
+    response['X-Sendfile'] = smart_str(file.file.path)
     # It's usually a good idea to set the 'Content-Length' header too.
     # You can also set any other required headers: Cache-Control, etc.
     return response
     return
 
-def get_post_file(request,file_name):
+def get_post_file(request,fileid):
+    file = get_object_or_404(PostFile,pk=fileid)
+    file_name = file.file.name
     response = HttpResponse(content_type = 'application/force-download') # mimetype is replaced by content_type for django 1.7
     response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(file_name)
-    response['X-Sendfile'] = smart_str(reverse(get_post_file, args=(file_name,)))
+    response['X-Sendfile'] = smart_str(file.file.path)
     # It's usually a good idea to set the 'Content-Length' header too.
     # You can also set any other required headers: Cache-Control, etc.
     return response
@@ -175,9 +179,6 @@ def view_post(request,postid):
     post = get_object_or_404(Post, pk=postid)
     comments = post.post_comments.all()
     comment_form = CommentCreationForm()
-
-
-
     return render(request, 'base/view_post.html', {'post': post , 'comments': comments,'comment_form': comment_form})
 
 @login_required
@@ -198,13 +199,13 @@ def update_post(request,postid):
     if request.method == 'POST':
         form = PostCreationForm(request.POST, instance=post)
         file_form = PostFileForm(request.POST,request.FILES)
-        files = request.FILES.getlist('file')
+        files = request.POST.getlist('file')
         if form.is_valid() and file_form.is_valid():
             form.save()
             for f in files:
                 file_instance = PostFile(file=f,post=post)
                 file_instance.save()
-            return HttpResponseRedirect(reverse('view_room',args=(post.room.id,)))
+            return HttpResponseRedirect(reverse('view_post',args=(post.id,)))
         else:
             return render(request, 'base/update_post.html', {'post_form': form,'post': post})
     else:

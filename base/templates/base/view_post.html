@@ -19,7 +19,9 @@
                 {% endif %}
                 <div>
                     {% for file in post.post_files.all %}
-                    <a href="{% url 'get_room_file' file %}">{{ file }}</a>
+                    <a href="{% url 'get_post_file' file.id %}">{{ file }}</a>
+                    {% empty %}
+                    <small>No files</small>
                     {% endfor %}
                 </div>
             </div>

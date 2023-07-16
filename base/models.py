@@ -45,7 +45,7 @@ class RoomFile(models.Model):
         unique_together = ('file', 'room')
 
     def __str__(self): 
-        return self.file.name.partition('room_files/')[2]
+        return self.file.name
 
 class Post(models.Model):
     title = models.CharField(max_length=120)
@@ -75,7 +75,7 @@ class PostFile(models.Model):
         unique_together = ('file', 'post')  
 
     def __str__(self):
-        return self.file.name.partition('post_files/')[2]
+        return self.file.name
     
 
 class Comment(models.Model):
