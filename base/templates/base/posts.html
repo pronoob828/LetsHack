@@ -6,7 +6,7 @@
         <small></small>
     </div>
     <p class="mb-1">{{post.content | truncatechars:100}}</p>
-    <small>{{post.creator}}</small>
+    <small>{{post.creator |safe }}</small>
 </a>
 <hr>
 {% empty %}

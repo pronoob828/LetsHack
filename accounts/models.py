@@ -71,7 +71,7 @@ class Account(AbstractBaseUser,PermissionsMixin):
         unique_together = ('username','email')
 
     def __str__(self):
-        return f"@{self.username}"
+        return f"<a href='/accounts/{self.id}'>@{self.username}</a>"
     
     def get_full_name(self):
         full_name = "%s" % (self.username,)

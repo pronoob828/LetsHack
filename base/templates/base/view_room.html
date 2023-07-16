@@ -5,28 +5,28 @@
 <div class="container" style="display: grid; grid-template-columns: 3fr 1fr;">
     <div class="border rounded border-info m-2">
         <div class="container mt-2 mb-2 border-bottom border-info pb-2">
-            <a href="javascript:history.back()" class="btn btn-info btn-sm">Back</a>
+            <a href="{% url 'index'%}?t={{room.topic.name}}" class="btn btn-info btn-sm">Back</a>
         </div>
         <div class="border-bottom border-info">
             <div class="text-center">
                 <h2>{{room.name}}</h2>
-                <small>{{room.topic}}   -   {{room.creator}}</small>
+                <small>{{room.topic}} - {{room.creator|safe}}</small>
                 <div>
-                {% if not joined and not is_private%}
+                    {% if not joined and not is_private%}
                     <a href="{% url 'join_room' room.id %}" class="btn btn-success btn-sm">Join Room</a>
-                {% endif %}
-                {% if request.user == room.creator %}
+                    {% endif %}
+                    {% if request.user == room.creator %}
                     <a href="{% url 'update_room' room.id %}" class="btn btn-info btn-sm">Update</a>
-                    <a href="{% url 'delete_room' room.id %}" class="btn btn-danger btn-sm">Delete</a>    
-                {% elif joined and request.user != room.creator %}
+                    <a href="{% url 'delete_room' room.id %}" class="btn btn-danger btn-sm">Delete</a>
+                    {% elif joined and request.user != room.creator %}
                     <a href="{% url 'leave_room' room.id %}" class="btn btn-danger btn-sm">Leave Room</a>
-                {% endif %}
+                    {% endif %}
 
                 </div>
             </div>
             <div class="text-center">
                 {% for file in room.room_files.all %}
-                    <a href="{% url 'get_room_file' file.id %}">{{ file }}</a>
+                <a href="{% url 'get_room_file' file.id %}">{{ file }}</a>
                 {% empty %}
                 <small>No files uploaded</small>
                 {% endfor %}
@@ -42,6 +42,18 @@
             <hr class="text-info">
         </div>
         <div class="container">
+            <form class="container-fluid" action="{% url 'view_room' room.id %}">
+                <input name="p" class="form-control bg-dark text-white m-auto" type="search" placeholder="Search Posts"
+                    aria-label="Search">
+            </form>
+            <hr class="text-info">
+            {% if request.GET.p %}
+            <div class="container">
+                <h3>Showing Results for : '{{request.GET.p}}'</h3>
+                <a href="{% url 'view_room' room.id %}" class="link m-0">Show all posts</a>
+            </div>
+            <hr class="text-info">
+            {% endif %}
             <div class="border rounded border-success list-group p-3 m-1">
                 {% include "base/posts.html" %}
             </div>
@@ -52,7 +64,7 @@
         <h2 class="text-center">Participants</h2>
         <ul class="list-group">
             {% for participant in room.participants.all %}
-            <li class="list-group-item bg-dark m-1 text-white border-dark">{{participant}}</li>
+            <li class="list-group-item bg-dark m-1 text-white border-dark">{{participant | safe}}</li>
             {% endfor %}
         </ul>
     </div>

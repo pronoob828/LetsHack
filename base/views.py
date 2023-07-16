@@ -48,7 +48,6 @@ def get_room_file(request,fileid):
     # It's usually a good idea to set the 'Content-Length' header too.
     # You can also set any other required headers: Cache-Control, etc.
     return response
-    return
 
 def get_post_file(request,fileid):
     file = get_object_or_404(PostFile,pk=fileid)
@@ -59,7 +58,6 @@ def get_post_file(request,fileid):
     # It's usually a good idea to set the 'Content-Length' header too.
     # You can also set any other required headers: Cache-Control, etc.
     return response
-    return
 
 #ROOMS
 
@@ -69,7 +67,11 @@ def view_room(request, roomid):
     context['room'] = room
     context['post_form'] = PostCreationForm()
     context['file_form'] = PostFileForm()
-    context['posts'] = room.room_posts.all()
+    if request.GET:
+        p = request.GET.get('p')
+        context['posts'] = room.room_posts.filter(title__icontains=p)
+    else:
+        context['posts'] = room.room_posts.all()
     context['joined'] = (request.user in room.participants.all())
     
     return render(request,"base/view_room.html",context)
@@ -100,6 +102,8 @@ def create_room(request):
 @login_required
 def update_room(request,roomid):
     room = get_object_or_404(Room, pk=roomid)
+    for file in room.room_files.all():
+        file.delete()
     if request.method == 'POST':
         form = RoomCreationForm(request.POST,instance = room)
         file_form = RoomFileForm(request.POST,request.FILES)
@@ -196,6 +200,8 @@ def delete_post(request,postid):
 @login_required
 def update_post(request,postid):
     post = get_object_or_404(Post, pk=postid)
+    for file in post.post_files.all():
+        file.delete()
     if request.method == 'POST':
         form = PostCreationForm(request.POST, instance=post)
         file_form = PostFileForm(request.POST,request.FILES)

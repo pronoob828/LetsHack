@@ -38,7 +38,7 @@ class Room(models.Model):
         return self.name 
     
 class RoomFile(models.Model):
-    file = models.FileField(upload_to='./room_files/',null=True,blank=True,)
+    file = models.FileField(upload_to='media/room_files/',null=True,blank=True,)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='room_files')
     
     class Meta:
@@ -68,7 +68,7 @@ class Post(models.Model):
         return self.title
     
 class PostFile(models.Model):
-    file = models.FileField(upload_to='./post_files/',null=True,blank=True,)
+    file = models.FileField(upload_to='media/post_files/',null=True,blank=True,)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_files')
 
     class Meta:
